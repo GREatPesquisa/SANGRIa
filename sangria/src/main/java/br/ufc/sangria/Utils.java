@@ -8,15 +8,16 @@ public class Utils {
 	
 	public static String readKey() {
         String key = new String();
-        String nome = "C:/Users/Lana/ibm.txt";
+        String path = "C:/Users/Lana/sangria/ibm.txt";
   
         try {
-          FileReader arq = new FileReader(nome);
+          FileReader arq = new FileReader(path);
           BufferedReader lerArq = new BufferedReader(arq);
           key = lerArq.readLine(); 
           arq.close();
         } catch (IOException e) {
-            System.err.printf("Erro na abertura do arquivo: %s.\n",
+            System.err.printf("Erro na abertura do arquivo: %s.\n "
+            		+ "Mude no código a string path em Utils para o caminho correto da chave.\n",
               e.getMessage());
         }
         return key;

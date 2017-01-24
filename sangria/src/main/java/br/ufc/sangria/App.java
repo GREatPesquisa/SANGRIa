@@ -14,38 +14,44 @@ import com.ibm.watson.developer_cloud.alchemy.v1.model.DocumentSentiment;
 import com.ibm.watson.developer_cloud.alchemy.v1.model.Entities;
 import com.ibm.watson.developer_cloud.alchemy.v1.model.LanguageSelection;
 
-
+@SuppressWarnings("unused")
 public class App 
 {
 	
 	private static String api_key="";
-	
+	private static final String fileAppMeuOnibus = "C:/Users/Lana/sangria/ReviewsMeuÔnibus.xlsx";
+	private static final String fileAppWaze = "C:/Users/Lana/sangria/ReviewsWaze.xlsx";
+	private static ParseTable docMeuOnibus;
+	public static Review[] reviews;
     public static void main( String[] args )
     {
     	api_key = Utils.readKey();
-    	//getViaRest();
+    	docMeuOnibus = new ParseTable(fileAppMeuOnibus, reviews);
+    	setAlchemyAPI();
+    	
     	//getViaSDK();
     }
     
-    public static void getViaSDK(){
-		
+    public static AlchemyLanguage setAlchemyAPI(){
 		AlchemyLanguage service = new AlchemyLanguage();
 		service.setApiKey(api_key);
 		service.setLanguage(LanguageSelection.PORTUGUESE);
-
-	    Map<String, Object> params = new HashMap<String, Object>();
+	    return service;
+	}
+    
+    public static void readReviewsEmotion(AlchemyLanguage service){
+    	
+    	Map<String, Object> params = new HashMap<String, Object>();
 	    params.put(AlchemyLanguage.TEXT, "Lana é uma pessoa muito alegre e gosta de viajar.");
-
-	    // get sentiment
+	    
+    	// get sentiment
 	    DocumentSentiment sentiment = service.getSentiment(params).execute();
 	    System.out.println("Sentiment: " + sentiment);
-	    service.getSentiment(params);
 
 	    // get entities
 	    Entities entities = service.getEntities(params).execute();
-	    System.out.println("Entities: " + entities);	
-		
-	}
+	    System.out.println("Entities: " + entities);
+    }
     
     
     
