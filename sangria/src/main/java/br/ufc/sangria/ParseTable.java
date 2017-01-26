@@ -15,8 +15,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 // doc https://poi.apache.org/apidocs/index.html
 
 public class ParseTable{
+	
+	Review[] reviews;
 
-	public ParseTable(String file, Review[] reviews) {
+	public ParseTable(String file) {
 
 		try {
 
@@ -38,18 +40,25 @@ public class ParseTable{
 
 				Cell currentCell = cellIterator.next();
 				String author = currentCell.getStringCellValue();
-
+				//System.out.println(author);
+				
 				currentCell = cellIterator.next();
 				String date = currentCell.getStringCellValue();
+				//System.out.println(date);
 
 				currentCell = cellIterator.next();
-				String comment = currentCell.getStringCellValue();
+				String commentPt = currentCell.getStringCellValue();
+				//System.out.println(commentPt);
+				
+				currentCell = cellIterator.next();
+				String commentEn = currentCell.getStringCellValue();
+				//System.out.println(comment);
 
 				currentCell = cellIterator.next();
 				int stars = (int) currentCell.getNumericCellValue();
 
-				reviews[n] = new Review(author, date, comment, stars);
-				reviews[n].print();
+				reviews[n] = new Review(author, date, commentPt, commentEn, stars);
+				//reviews[n].print();
 				
 				n++;
 
