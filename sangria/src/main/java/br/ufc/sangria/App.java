@@ -1,6 +1,7 @@
 package br.ufc.sangria;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -26,14 +27,18 @@ public class App {
 
 	private static String api_key = "";
 	private static final String fileAppMeuOnibus = "C:/Users/Lana/sangria/ReviewsMeuÔnibus.xlsx";
+	private static final String fileAppMeuOnibusResults = "C:/Users/Lana/sangria/ReviewsMeuÔnibusResults.xlsx";
 	private static final String fileAppWaze = "C:/Users/Lana/sangria/ReviewsWaze.xlsx";
+	private static final String fileAppWazeResults = "C:/Users/Lana/sangria/ReviewsWazeResults.xlsx";
 	private static ParseTable docMeuOnibus;
 	public static Review[] reviewsMeuOnibus;
 
-	public static void main(String[] args) {
-		api_key = Utils.readKey();
-		docMeuOnibus = new ParseTable(fileAppMeuOnibus);
-		readReviewsEmotion(docMeuOnibus.reviews);
+	public static void main(String[] args) throws FileNotFoundException, IOException {
+		//api_key = Utils.readKey();
+		//docMeuOnibus = new ParseTable(fileAppMeuOnibus);
+		//readReviewsEmotion(docMeuOnibus.reviews);
+		docMeuOnibus = new ParseTable();
+		docMeuOnibus.writeResults(fileAppMeuOnibusResults);
 
 	}
 
@@ -78,39 +83,6 @@ public class App {
 		}
 	}
 
-	public static void getViaRest() {
-		try {
-			URL url = new URL("https://access.alchemyapi.com/calls/data/GetNews?" + "apikey=" + api_key
-					+ "&outputMode=json&start=now-1d&end=now&maxResults="
-					+ "100&q.enriched.url.enrichedTitle.relations.relation="
-					+ "|action.verb.text=acquire,object.entities.entity.type=Company|" + "&return=enriched.url.title");
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-			conn.setRequestProperty("Accept", "application/json");
-
-			if (conn.getResponseCode() != 200) {
-				throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
-			}
-
-			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-
-			String output;
-			System.out.println("Output from Server .... \n");
-			while ((output = br.readLine()) != null) {
-				System.out.println(output);
-			}
-
-			conn.disconnect();
-
-		} catch (MalformedURLException e) {
-
-			e.printStackTrace();
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-
-		}
-	}
+	
 
 }
