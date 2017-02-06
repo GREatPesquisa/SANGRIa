@@ -31,21 +31,35 @@ public class App {
 	private static final String fileAppWaze = "C:/Users/Lana/sangria/ReviewsWaze.xlsx";
 	private static final String fileAppWazeResults = "C:/Users/Lana/sangria/ReviewsWazeResults.xlsx";
 	private static ParseTable docMeuOnibus;
-	public static Review[] reviewsMeuOnibus;
+	private static ParseTable docWaze;
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		//api_key = Utils.readKey();
-		//docMeuOnibus = new ParseTable(fileAppMeuOnibus);
-		//readReviewsEmotion(docMeuOnibus.reviews);
-		docMeuOnibus = new ParseTable();
-		docMeuOnibus.writeResults(fileAppMeuOnibusResults);
+		System.out.println("Start SANGRIa...\n\n");
+		api_key = Utils.readKey();
+
+		System.out.println("Get reviews from apps...\n");
+		docMeuOnibus = new ParseTable(fileAppMeuOnibus);
+		// docWaze = new ParseTable(fileAppWaze);
+
+		System.out.println("Create file of results...\n");
+		docMeuOnibus.prepareResultsFile(fileAppMeuOnibusResults);
+		// docWaze.prepareResultsFile(fileAppWazeResults);
+
+		try {
+			System.out.println("Get Emotional Results");
+			readReviewsEmotion(docMeuOnibus, fileAppMeuOnibusResults);
+			// readReviewsEmotion(docWaze, fileAppWazeResults);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		docMeuOnibus.closeTable();
+		// docWaze.closeTable();
 
 	}
 
-
-
-	public static void readReviewsEmotion(Review[] reviews) {
-		
+	public static void readReviewsEmotion(ParseTable doc, String file) throws FileNotFoundException, IOException {
+		Review[] reviews = doc.reviews;
 		AlchemyLanguage service = new AlchemyLanguage();
 		service.setApiKey(api_key);
 
@@ -54,24 +68,24 @@ public class App {
 
 		for (Review x : reviews) {
 			service.setLanguage(LanguageSelection.PORTUGUESE);
-			
+
 			x.print();
-			
+
 			paramsPt.put(AlchemyLanguage.TEXT, x.commentPt);
 			paramsEn.put(AlchemyLanguage.TEXT, x.commentEn);
-			
+
 			// get sentiment
 			DocumentSentiment docSentiment = service.getSentiment(paramsPt).execute();
 			x.sentiment = docSentiment.getSentiment();
 			System.out.println("Sentiment: " + docSentiment);
-			
+
 			service.setLanguage(LanguageSelection.ENGLISH);
-			
+
 			// get emotion
 			DocumentEmotion docEmotion = service.getEmotion(paramsEn).execute();
 			x.emotion = docEmotion.getEmotion();
 			System.out.println("Emotion: " + docEmotion);
-			
+
 			// get keywords
 			Keywords keywords = service.getKeywords(paramsEn).execute();
 			x.keywords = keywords.getKeywords();
@@ -80,9 +94,9 @@ public class App {
 			// get entities
 			Entities entities = service.getEntities(paramsEn).execute();
 			System.out.println("Entities: " + entities);
+
+			doc.writeResult(file, x);
 		}
 	}
-
-	
 
 }
